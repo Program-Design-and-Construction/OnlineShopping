@@ -9,8 +9,17 @@ package onlineshopping;
  * @author sct_n
  */
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class DBManager {
 
@@ -38,20 +47,102 @@ public final class DBManager {
         if (this.conn == null) {
             try {
                 conn = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
-                System.out.println(URL + " Get Connected Successfully ....");
+                Statement statement = conn.createStatement();
+                String tableUser = "UserInfo";
+                String tableProduct = "ProductInfo";
+                if(!checkTableExisting(tableUser)){
+                    statement.executeUpdate("CREATE TABLE " + tableUser + " (name VARCHAR(12), password VARCHAR(12), credit DOUBLE)");
+                }
+                if(!checkTableExisting(tableProduct)){
+                    statement.executeUpdate("CREATE TABLE " + tableProduct + " (name VARCHAR(20), type VARCHAR(20), price DOUBLE)");
+                }
             } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+                System.out.println("Connection Fail");
             }
         }
     }
-
-    public void closeConnections() {
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+    
+    private boolean checkTableExisting(String newTableName){
+        boolean flag = false;
+        try {
+            System.out.println("check existing tables...");
+            String[] types = {"TABLE"};
+            DatabaseMetaData dbmd;
+            dbmd = conn.getMetaData();
+            ResultSet rsDBMeta = dbmd.getTables(null, null, null, null);
+            
+            while(rsDBMeta.next()){
+                String tableName = rsDBMeta.getString("TABLE_NAME");
+                if(tableName.compareToIgnoreCase(newTableName) == 0){
+                    System.out.println(tableName + " is there");
+                    flag = true;
+                }
             }
+            if(rsDBMeta != null){
+                rsDBMeta.close();
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
         }
+        return flag;        
+    }
+    
+    public state checkName(String username, String password){
+        state state = new state();
+        Statement statement;
+        try {
+            statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT name, password, credit FROM UserInfo WHERE name = '" + username + "'");
+            
+            if(rs.next()){
+                String pass = rs.getString("password");
+                System.out.println("***"+pass);
+                System.out.println("found user");
+                if(password.compareTo(pass) == 0){
+                    state.cust.setName(rs.getString("name"));
+                    state.cust.setPassword(pass);
+                    state.cust.setCredit(rs.getDouble("credit"));
+                    System.out.println("Logged In");
+                    state.loginFlag = true;
+                } else{
+                    System.out.println("wrong password");
+                }
+            }
+            state.productList = getProductList();
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }   
+        return state;
+    }
+    
+    public void addProduct(String name, String type, double price) {
+        try {
+            Statement statement = conn.createStatement();
+            String product = "INSERT INTO ProductInfo (name, type, price) VALUES ('" + name + "', '" + type + "', " + price + ")";
+            statement.executeUpdate(product);
+            System.out.println("Product added to ProductInfo table.");
+        } catch (SQLException ex) {
+            System.out.println("Error adding the product: " + ex.getMessage());
+        }
+    }
+    
+    public Map<String,List<product>> getProductList(){
+        Map<String, List<product>> prList = new HashMap<>();
+        
+        Statement statement;
+        try {
+            statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT name, type, price FROM ProductInfo");
+            while(resultSet.next()){
+                String name = resultSet.getString("name");
+                String type = resultSet.getString("type");
+                double price = resultSet.getDouble("price");
+                product prd = new product(name,type,price);
+                prList.computeIfAbsent(type, k -> new ArrayList<>()).add(prd);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Fail to add product"+ ex.getMessage());
+        }
+        return prList;
     }
 }

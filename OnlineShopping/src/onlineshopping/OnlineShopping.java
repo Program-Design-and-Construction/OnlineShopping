@@ -15,8 +15,10 @@ public class OnlineShopping {
      */
     public static void main(String[] args) {
         // TODONOT code application logic here
-        System.out.println("Hello");
-        System.out.println("another line");
+        View view = new View();
+        Model model = new Model();
+        Controller controller = new Controller(view, model);
+        model.addObserver(view);
     }
     
 }

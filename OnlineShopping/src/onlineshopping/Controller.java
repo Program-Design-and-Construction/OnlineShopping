@@ -41,12 +41,19 @@ public class Controller implements ActionListener{
                 String password = this.view.pwInput.getText(); // Get password
                 this.model.checkName(username, password);
                 break;
-            case "Next":
-                //Next button
-                this.model.checkAnswer(this.view.calcSolution.getText());
+            case "Info":
+                //Info button
+                this.model.info();
                 break;
-            case "Quit":
-                this.model.quitGame();
+            case "Store":
+                //store button
+                this.model.store();
+                break;
+            case "comboBoxChanged":
+                //this.model.store();
+                break;
+            case "Log out":
+                this.model.logout();
                 break;
             default:
                 break;

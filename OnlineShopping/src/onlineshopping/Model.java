@@ -13,49 +13,40 @@ import java.util.Random;
  */
 public class Model extends Observable{
     
-    public Database db;
-    public Data data;
+    public DBManager db;
+    public state state;
+
     public int answer = 0;
     public String username;
     
     public Model(){
-        this.db = new Database();
-        this.db.dbsetup();
+        this.db = new DBManager();
     }
     
     public void checkName (String username, String password){
-        this.username = username;
-        this.data = this.db.checkName(username, password);
-        if(data.loginFlag){
-            this.newQuestion();
-        }
+        System.out.println("Checking User");
+        this.state = db.checkName(username, password);
         this.setChanged();
-        this.notifyObservers(this.data);
+        this.notifyObservers(this.state);
     }
     
-    public void newQuestion(){
-        this.data.num1 = getNumber();
-        this.data.num2 = getNumber();
-        this.answer = this.data.num1 + this.data.num2;
-    }
-    
-    public int getNumber(){
-        Random generator = new Random();
-        int i = generator.nextInt(100);
-        return i;
-    }
-    
-    public void checkAnswer(String answer){
-        data.currentScore = (answer.equals(this.answer + "") ? data.currentScore+10 : data.currentScore-10);
-        this.newQuestion();
+    public void info(){
+        System.out.println("Info clicked");
+        this.state.menuStatus = "Info";
         this.setChanged();
-        this.notifyObservers(this.data);
+        this.notifyObservers(state);
     }
     
-    public void quitGame(){
-        this.db.quitGame(this.data.currentScore, this.username);
-        this.data.quitFlag = true;
+    public void store(){
+        System.out.println("Store clicked");
+        this.state.menuStatus = "Store";
         this.setChanged();
-        this.notifyObservers(this.data);
+        this.notifyObservers(state);
+    }
+    public void logout(){
+        System.out.println("Loging out...");
+        this.state = new state();
+        this.setChanged();
+        this.notifyObservers(state);
     }
 }

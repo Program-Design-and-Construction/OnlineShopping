@@ -6,9 +6,11 @@ package onlineshopping;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -28,6 +30,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -39,13 +42,12 @@ public class View extends JFrame implements Observer{
     
     private JPanel loginPanel = new JPanel(new GridBagLayout());
     
-    public JTextField unInput = new JTextField(10);
-    public JTextField pwInput = new JTextField(10);
-    private JLabel wrongName = new JLabel("wrong username or password: ");
+    public JTextField unInput = new JTextField(16);
+    public JPasswordField pwInput = new JPasswordField(16);
+    
     
     //Homepage
-    private JButton storeButton = new JButton("Store");
-    private JButton checkout = new JButton("Checkout");
+    private JButton storeButton = new JButton("Store");    
     private JButton logoutButton = new JButton("Log out");
     private JButton infoButton = new JButton("info");
     
@@ -53,6 +55,7 @@ public class View extends JFrame implements Observer{
     public JLabel message = new JLabel("Welcome to OnlineShopping!");
     private JLabel uName = new JLabel("Username: ");
     private JLabel pWord = new JLabel("Password: ");
+    private JLabel wrongName = new JLabel("");
     private JButton loginButton = new JButton("Log in");
     private JButton registerButton = new JButton("Register");
     
@@ -62,10 +65,15 @@ public class View extends JFrame implements Observer{
     public JButton previousButton = new JButton("Previous Item");
     public JButton addButton = new JButton("Add Item");
     
+    //Checkout
+    private JButton checkoutButton = new JButton("Checkout");
+    public JButton confirmButton = new JButton("Confirm");
+    public JButton cancelButton = new JButton("Cancel");
+    
     public View(){
         login();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(600,600);
+        //this.setSize(600,600);
         this.setLocationRelativeTo(null); //Make the frame located at the absolute center of the screen.
         this.setVisible(true);
     }
@@ -93,13 +101,16 @@ public class View extends JFrame implements Observer{
         gbc.gridx = 1;
         this.loginPanel.add(pwInput, gbc);
         
-        gbc.gridx = 0;
         gbc.gridy = 3;
+        this.loginPanel.add(wrongName,gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
         this.loginPanel.add(loginButton, gbc);
         gbc.gridx = 1;
         this.loginPanel.add(registerButton, gbc);
         this.getContentPane().removeAll();
         this.add(loginPanel);
+        this.pack();
         this.revalidate();
         this.repaint();
     }
@@ -109,12 +120,21 @@ public class View extends JFrame implements Observer{
         this.logoutButton.addActionListener(listener);
         this.infoButton.addActionListener(listener);
         this.storeButton.addActionListener(listener);
+        
+        //Store page
         this.productTypeComboBox.addActionListener(listener);
+        this.nextButton.addActionListener(listener);
+        this.previousButton.addActionListener(listener);
+        this.addButton.addActionListener(listener);
+        
+        //Checkout page
+        this.checkoutButton.addActionListener(listener);
+        this.confirmButton.addActionListener(listener);
+        this.cancelButton.addActionListener(listener);
         this.registerButton.addActionListener(listener);
     }
     
     public void  shoppingPage(state state){
-        //state state = state;
         
         JPanel shoppingPanel = new JPanel();
         JLabel welcomeLabel = new JLabel("Welcome,"+state.cust.getName()+"!");
@@ -122,23 +142,26 @@ public class View extends JFrame implements Observer{
         
         JPanel menu = new JPanel();
         menu.setLayout(new BoxLayout(menu, BoxLayout.PAGE_AXIS));
+        menu.add(infoButton);
         menu.add(storeButton);
-        menu.add(checkout);
+        menu.add(checkoutButton);
         menu.add(logoutButton);
         
         
         JPanel menuGUI = getmenuGUI(state);
         
         this.getContentPane().removeAll();
-        this.add(shoppingPanel,BorderLayout.NORTH);
-        this.add(menu,BorderLayout.WEST);
+        this.add(shoppingPanel,BorderLayout.NORTH);     
         this.add(menuGUI,BorderLayout.CENTER);
+        this.add(menu,BorderLayout.WEST);
         this.revalidate();
+        this.pack();
         this.repaint();
     }
     
     public JLabel getImage(String img){
-        JLabel imageLabel = new JLabel(img); 
+        JLabel imageLabel = new JLabel("Image");
+        System.out.println(img);
         try {
             // Load the image from a file (change the path to your image)
             BufferedImage image = ImageIO.read(new File("resource/"+img+".jpg"));
@@ -160,14 +183,24 @@ public class View extends JFrame implements Observer{
         p.setBackground(Color.WHITE);
         switch(state.menuStatus){
             case "Info":
-                p=info(state);
+                p = info(state);
                 break;
             case "Store":
                 p = store(state);
                 break;
+            case "Checkout":
+                p = checkout(state);
+                break;
+            case "Payment Success":
+                p = paymentPanel("Success");
+                break;
+            case "Payment Fail":
+                p = paymentPanel("Fail");
+                break;
             default:
                 break;
         }
+        p.revalidate();
         return p;
     }
    
@@ -178,66 +211,85 @@ public class View extends JFrame implements Observer{
         text += "Current credit: $ "+state.cust.getCredit();
         textA.setText(text);
         p.add(textA);
+        p.revalidate();
         return p;
     }
     
-    public JPanel store(state state){
-        JPanel p = new JPanel();
-        p.setLayout(new BorderLayout());
-        JLabel currentPr = null;
-       
-        Map<String, List<product>> productList = state.productList;        
+    public void getProductTypeComboBox(state s){
+        Map<String, List<product>> productList = s.productList;        
         //get the product type list and add type combobox
-        for (Map.Entry<String, List<product>> entry : productList.entrySet()) {
-            String type = entry.getKey();
-//            if(productList.containsKey(type)){
-//                productTypeComboBox.addItem(type);
-//            }
-            productTypeComboBox.addItem(type);
+        if(productTypeComboBox.getItemCount() == 0){
+            for (Map.Entry<String, List<product>> entry : productList.entrySet()) {
+                String type = entry.getKey();           
+                productTypeComboBox.addItem(type);
+            }
         }
-        p.add(productTypeComboBox,BorderLayout.NORTH);
+    }
+    public JPanel store(state state){
+        JPanel p = new JPanel(new BorderLayout()); 
         
-        String selectedType = productTypeComboBox.getSelectedItem().toString();
-        List<product> prList = state.productList.get(selectedType);
+        //North componet
+        JPanel Northp = new JPanel();
+        Northp.add(previousButton);
+        Northp.add(productTypeComboBox);
+        Northp.add(nextButton);
+        Northp.revalidate();
         
-        int index = 0;
-        if (index >= 0 && index < prList.size()) {
-            product pr = prList.get(index);
-            currentPr = getImage(pr.getName());
-        } else {
-            System.out.println("Invalid index.");
-        }
-        p.add(currentPr,BorderLayout.CENTER);
-        p.add(nextButton,BorderLayout.EAST);
-        p.add(previousButton,BorderLayout.WEST);
-        p.add(addButton,BorderLayout.SOUTH);
-
+        //Center component
+        product pr = state.getProduct();
+        JLabel Centerp = getImage(pr.getName());
+        
+        //South component
+        JPanel Southp = new JPanel();
+        Southp.add(addButton);
+        
+        //Put all store componenet inside store panel
+        p.add(Northp,BorderLayout.NORTH);
+        p.add(Centerp,BorderLayout.CENTER);
+        p.add(Southp,BorderLayout.SOUTH);      
+        
         return p;
     }
     
-    public boolean containItem(Map<String, List<product>> productList, String type){
-        for (Map.Entry<String, List<product>> entry : productList.entrySet()) {
-            String type = entry.getKey();
-            productTypeComboBox.addItem(type);
-        }
+    public JPanel checkout(state state){
+        JPanel p = new JPanel();
+        JTextArea textA = new JTextArea();
+        String text = state.printCart();
+        textA.setText(text);
+        p.add(textA);
+        p.add(confirmButton);
+        p.add(cancelButton);
+        p.revalidate();
+        return p;
     }
-    //public List<product> getProd 
+    
+    public JPanel paymentPanel(String pmt){
+        JPanel p = new JPanel();
+        JLabel img = getImage(pmt);
+        p.add(img);
+        p.revalidate();
+        return p;
+    }
     @Override
     public void update(Observable o, Object arg) {
         state state = (state) arg;
         if(!state.loginFlag){
             this.unInput.setText("");
             this.pwInput.setText("");
+            this.wrongName.setText("Wrong User or Pass word");
+            this.wrongName.setForeground(Color.RED);
             this.login();
         }else{
+            this.wrongName.setText("");
             this.shoppingPage(state);
+            getProductTypeComboBox(state);
         }
     }
     
     public static void main(String[] args) {
         View view = new View();
         state s = new state();
-        view.shoppingPage(s);
+        //view.shoppingPage(s);
     }
     
 }

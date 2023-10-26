@@ -45,7 +45,7 @@ public abstract class customerTemplate implements customerFeature{
 
     @Override
     public void setPassword(String p) {
-        this.password = password;
+        this.password = p;
     }
     
     public void setCredit(Double credit){

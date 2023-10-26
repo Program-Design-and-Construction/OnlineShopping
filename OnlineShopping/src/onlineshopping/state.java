@@ -4,6 +4,7 @@
  */
 package onlineshopping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,13 +16,75 @@ import java.util.Map;
 public class state {
     boolean loginFlag;
     customer cust;
-    String menuStatus = "Info";
+    String menuStatus;
     Map<String, List<product>> productList;
-    int currentItem = 0;
+    String productType;
+    int productIndex;
+    Map<product, Integer> cart;
+    double totalCost;
     
     public state(){
         loginFlag = false;
+        menuStatus = "Info";
         cust = new customer();
         productList = new HashMap<>();
+        cart = new HashMap<>();
+        productIndex = 0;
+        totalCost = 0;
+    }
+    
+    public product getProduct(){
+
+        if (productList != null && productType != null) {
+        List<product> prList = productList.get(productType);
+
+        if (prList != null && productIndex >= 0 && productIndex < prList.size()) {
+            product pr = prList.get(productIndex);
+            return pr;
+        }
+    }
+        return null;
+    }
+    
+    public void addToCart(){
+        product pr = getProduct();      
+        System.out.println("Add "+ pr.getName() + "to cart.");
+
+        // Check if the item is already in the HashMap
+        if (cart.containsKey(pr)) {
+            // If it's already there, increment the count
+            cart.put(pr, cart.get(pr) + 1);
+        } else {
+            // If it's not in the HashMap, add it with a count of 1
+            cart.put(pr, 1);
+        }
+        totalCost += pr.getPrice();
+    }
+    
+    public String printCart(){
+        String text = "Your cart:\n";
+        for (Map.Entry<product, Integer> entry : cart.entrySet()) {
+            text += entry.getKey().getName() + "  X  " + entry.getValue() +"=  $" + (entry.getKey().getPrice()*entry.getValue())+"\n";
+        }        
+        text += "Total cost: $"+ totalCost;
+        return text;
+    }
+    
+    public boolean makePayment(){
+        boolean success = false;
+        if(cust.getCredit() >= totalCost){
+            cust.purchase(totalCost);
+            success = true;
+        }
+        productList = new HashMap<>();
+        cart = new HashMap<>();
+        totalCost = 0;
+        return success;
+    }
+    
+    public void resetCart(){
+        cart = new HashMap<>();
+        productList = new HashMap<>();
+        totalCost = 0;
     }
 }

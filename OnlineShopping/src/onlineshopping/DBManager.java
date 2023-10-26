@@ -18,14 +18,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class DBManager {
 
     private static final String USER_NAME = "shoppingOnline"; //your DB username
     private static final String PASSWORD = "shoppingOnline"; //your DB password
     private static final String URL = "jdbc:derby:shoppingOnline; create=true";  //url of the DB host
+    
+    private final String tableUser = "UserInfo";
+    private final String tableProduct = "ProductInfo";
 
     Connection conn;
 
@@ -48,8 +49,7 @@ public final class DBManager {
             try {
                 conn = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
                 Statement statement = conn.createStatement();
-                String tableUser = "UserInfo";
-                String tableProduct = "ProductInfo";
+
                 if(!checkTableExisting(tableUser)){
                     statement.executeUpdate("CREATE TABLE " + tableUser + " (name VARCHAR(12), password VARCHAR(12), credit DOUBLE)");
                 }
@@ -66,7 +66,6 @@ public final class DBManager {
         boolean flag = false;
         try {
             System.out.println("check existing tables...");
-            String[] types = {"TABLE"};
             DatabaseMetaData dbmd;
             dbmd = conn.getMetaData();
             ResultSet rsDBMeta = dbmd.getTables(null, null, null, null);
@@ -115,6 +114,24 @@ public final class DBManager {
         return state;
     }
     
+    public state updateNewUser(String name, String pass){
+        state state = new state();
+        Statement statement;
+        try {
+            statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT name, password, credit FROM UserInfo WHERE name = '" + name + "'");
+            
+            if(!rs.next()){
+                statement.executeUpdate("INSERT INTO UserInfo " + "VALUES('" + name + "', '" + pass + "', 1000)");
+                state.loginFlag = true;
+            }else{
+                System.out.println("Fail to update new user.");
+            }          
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }   
+        return state;
+    }
     public void addProduct(String name, String type, double price) {
         try {
             Statement statement = conn.createStatement();
@@ -137,12 +154,25 @@ public final class DBManager {
                 String name = resultSet.getString("name");
                 String type = resultSet.getString("type");
                 double price = resultSet.getDouble("price");
-                product prd = new product(name,type,price);
+                product prd = new product(type,name,price);
                 prList.computeIfAbsent(type, k -> new ArrayList<>()).add(prd);
             }
         } catch (SQLException ex) {
             System.out.println("Fail to add product"+ ex.getMessage());
         }
         return prList;
+    }
+    
+    public void updateCustomer(String name, double credit){
+        try {
+            Statement statement = conn.createStatement();
+            String update = "UPDATE " + tableUser
+                    + " SET credit = " + credit
+                    + " WHERE name = '" + name + "'";
+            statement.executeUpdate(update);
+            System.out.println("Customer credit updated");
+        } catch (SQLException ex) {
+            System.out.println("Error update customer: " + ex.getMessage());
+        }
     }
 }

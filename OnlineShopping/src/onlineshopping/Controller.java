@@ -35,11 +35,17 @@ public class Controller implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
         switch(command){
+            //Login Page
             case "Log in":
                 //login button
                 String username = this.view.unInput.getText(); // Get username
                 String password = this.view.pwInput.getText(); // Get password
                 this.model.checkName(username, password);
+                break;
+            case "Register":
+                String u = this.view.unInput.getText(); // Get username
+                String p = this.view.pwInput.getText(); // Get password
+                this.model.registerUser(u, p);
                 break;
             case "Info":
                 //Info button
@@ -50,7 +56,29 @@ public class Controller implements ActionListener{
                 this.model.store();
                 break;
             case "comboBoxChanged":
-                //this.model.store();
+                String type = this.view.productTypeComboBox.getSelectedItem().toString();
+                this.model.itemType(type);
+                break;
+            case "Next Item":
+                this.model.addIndex(1);
+                break;
+            case "Previous Item":
+                this.model.addIndex(-1);
+                break;
+            case "Add Item":
+                this.model.addtocart();
+                break;
+            case "Checkout":
+                System.out.println("Checkout model clicked");
+                this.model.checkout();
+                break;
+            case "Confirm":
+                System.out.println("Confirm clicked");
+                this.model.purchase();
+                break;
+            case "Cancel":
+                System.out.println("Cancel clicked");
+                this.model.resetCart();
                 break;
             case "Log out":
                 this.model.logout();

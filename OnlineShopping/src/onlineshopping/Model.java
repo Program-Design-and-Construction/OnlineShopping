@@ -34,21 +34,20 @@ public class Model extends Observable{
         this.notifyObservers(this.state);
     }
     public void info(){
-        System.out.println("Info clicked");
+        System.out.println("Go to info");
         this.state.menuStatus = "Info";
         this.setChanged();
         this.notifyObservers(state);
     }
     
     public void store(){
-        System.out.println("Model Store clicked");
+        System.out.println("Go to store");
         this.state.menuStatus = "Store";
         this.setChanged();
         this.notifyObservers(state);
     }
     
     public void itemType(String type){
-        this.state.menuStatus = "Store";
         this.state.productType = type;
         this.setChanged();
         this.notifyObservers(state);
@@ -60,9 +59,7 @@ public class Model extends Observable{
         index += n;
         if(index > prList.size()-1){
             index = 0;
-        }else if(index >= 0 && index < prList.size()-1){
-            index += n;
-        }else{
+        }else if(index < 0){
             index = prList.size()-1;
         }
         this.state.productIndex = index;
@@ -77,6 +74,11 @@ public class Model extends Observable{
         this.notifyObservers(state);
     }
     
+    public  void removeFromCart(){
+        this.state.removeFromCart();
+        this.setChanged();
+        this.notifyObservers(state);
+    }
     public void checkout(){
         System.out.println("Go to checkout");
         this.state.menuStatus = "Checkout";
@@ -87,11 +89,13 @@ public class Model extends Observable{
     public void purchase(){
         System.out.println("Make a purchase");
         this.state.menuStatus = "Payment Fail";
-        
+        String p = "Payment Fail";
         boolean chkPayment = this.state.makePayment();
         if(chkPayment){
+            p = "Payment Success";
             this.state.menuStatus = "Payment Success";           
         }
+        System.out.println(p);
         String name = this.state.cust.getName();
         double credit = this.state.cust.getCredit();
         this.db.updateCustomer(name, credit);
@@ -105,6 +109,29 @@ public class Model extends Observable{
         this.notifyObservers(state);
     }
     
+    public void topupMenu(){
+        System.out.println("Go to Topup");
+        this.state.menuStatus = "Topup";
+        this.setChanged();
+        this.notifyObservers(state);
+    }
+    
+    public void topUp(String credit){
+        System.out.println("Toped up");
+        this.state.menuStatus ="Success";
+        double c;
+        try {
+            c = Double.parseDouble(credit);
+            this.state.menuStatus = "Success";
+        } catch (NumberFormatException e) {
+            c = 0;
+            this.state.menuStatus = "Fail";
+        }
+        this.state.cust.setCredit(c);
+        this.db.updateCustomer(state.cust.getName(), state.cust.getCredit());
+        this.setChanged();
+        this.notifyObservers(state);
+    }
     public void logout(){
         System.out.println("Loging out...");
         this.state = new state();

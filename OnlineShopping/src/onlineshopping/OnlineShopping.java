@@ -14,7 +14,9 @@ public class OnlineShopping {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODONOT code application logic here
+        /**
+         * Step 1: Call View, Model, and Controller class
+         */
         View view = new View();
         Model model = new Model();
         Controller controller = new Controller(view, model);

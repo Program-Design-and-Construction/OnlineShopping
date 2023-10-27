@@ -49,8 +49,9 @@ public abstract class customerTemplate implements customerFeature{
     }
     
     public void setCredit(Double credit){
-        this.credit = credit;
+        this.credit += credit;
     }
+    
     @Override
     public double getCredit() {
         return credit;

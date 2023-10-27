@@ -5,14 +5,15 @@
         <group>
             <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/productFeature.java</file>
             <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/OnlineShopping.java</file>
+            <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/test/onlineshopping/stateTest.java</file>
             <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/Model.java</file>
             <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/View.java</file>
             <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/state.java</file>
             <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/customerFeature.java</file>
             <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/DBManager.java</file>
             <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/Controller.java</file>
-            <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/customerTemplate.java</file>
             <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/customer.java</file>
+            <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/customerTemplate.java</file>
             <file>file:/D:/2023/ProgramDesignAndConstruction/Assignment2/OnlineShopping/src/onlineshopping/product.java</file>
         </group>
     </open-files>

@@ -34,11 +34,6 @@ public final class DBManager {
         establishConnection();
     }
 
-    public static void main(String[] args) {
-        DBManager dbManager = new DBManager();
-        System.out.println(dbManager.getConnection());
-    }
-
     public Connection getConnection() {
         return this.conn;
     }
@@ -86,6 +81,7 @@ public final class DBManager {
         return flag;        
     }
     
+    //Check for existing name if exist return loginFlag=true inside state
     public state checkName(String username, String password){
         state state = new state();
         Statement statement;
@@ -95,7 +91,6 @@ public final class DBManager {
             
             if(rs.next()){
                 String pass = rs.getString("password");
-                System.out.println("***"+pass);
                 System.out.println("found user");
                 if(password.compareTo(pass) == 0){
                     state.cust.setName(rs.getString("name"));
@@ -114,6 +109,7 @@ public final class DBManager {
         return state;
     }
     
+    //Register new user into database
     public state updateNewUser(String name, String pass){
         state state = new state();
         Statement statement;
@@ -132,6 +128,8 @@ public final class DBManager {
         }   
         return state;
     }
+    
+    //Add product to database
     public void addProduct(String name, String type, double price) {
         try {
             Statement statement = conn.createStatement();
@@ -143,9 +141,11 @@ public final class DBManager {
         }
     }
     
+    //Get product list from database
     public Map<String,List<product>> getProductList(){
-        Map<String, List<product>> prList = new HashMap<>();
         
+        //Product list use prduct type as key and list of the product type as value
+        Map<String, List<product>> prList = new HashMap<>();       
         Statement statement;
         try {
             statement = conn.createStatement();
@@ -163,6 +163,7 @@ public final class DBManager {
         return prList;
     }
     
+    //Update the customer informate to database
     public void updateCustomer(String name, double credit){
         try {
             Statement statement = conn.createStatement();

@@ -35,7 +35,7 @@ public class Controller implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
         switch(command){
-            //Login Page
+            //Login interface
             case "Log in":
                 //login button
                 String username = this.view.unInput.getText(); // Get username
@@ -47,10 +47,14 @@ public class Controller implements ActionListener{
                 String p = this.view.pwInput.getText(); // Get password
                 this.model.registerUser(u, p);
                 break;
+            
+            //Info interface
             case "Info":
                 //Info button
                 this.model.info();
                 break;
+            
+            //Store interface
             case "Store":
                 //store button
                 this.model.store();
@@ -68,18 +72,31 @@ public class Controller implements ActionListener{
             case "Add Item":
                 this.model.addtocart();
                 break;
+            case "Remove Item":
+                this.model.removeFromCart();
+                break;
+                
+            //Checkout interface
             case "Checkout":
-                System.out.println("Checkout model clicked");
                 this.model.checkout();
                 break;
             case "Confirm":
-                System.out.println("Confirm clicked");
                 this.model.purchase();
                 break;
             case "Cancel":
-                System.out.println("Cancel clicked");
                 this.model.resetCart();
                 break;
+            
+            //Topup
+            case "Topup":
+                this.model.topupMenu();
+                break;
+            case "topupConfirmButton":
+                String creditText = this.view.topupInput.getText();               
+                this.model.topUp(creditText);
+                break;
+                
+            //logout
             case "Log out":
                 this.model.logout();
                 break;

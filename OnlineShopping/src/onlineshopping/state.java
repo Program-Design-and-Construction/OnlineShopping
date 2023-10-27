@@ -34,18 +34,26 @@ public class state {
     }
     
     public product getProduct(){
-
         if (productList != null && productType != null) {
-        List<product> prList = productList.get(productType);
-
-        if (prList != null && productIndex >= 0 && productIndex < prList.size()) {
-            product pr = prList.get(productIndex);
-            return pr;
+            List<product> prList = productList.get(productType);
+            if (prList != null && productIndex >= 0 && productIndex < prList.size()) {
+                product pr = prList.get(productIndex);
+                return pr;
+            }
         }
-    }
         return null;
     }
     
+    //Get the count of item in the cart and 
+    //if the item is not in the cart return 0 
+    public int itemCount(){
+        product p = getProduct();
+        int count = 0;
+        if(cart.get(p) != null){
+            count = cart.get(p);
+        }
+        return count;
+    }
     public void addToCart(){
         product pr = getProduct();      
         System.out.println("Add "+ pr.getName() + "to cart.");
@@ -61,6 +69,23 @@ public class state {
         totalCost += pr.getPrice();
     }
     
+    public void removeFromCart(){
+        product pr = getProduct();      
+        System.out.println("Remove "+ pr.getName() + "From cart.");
+
+        // Check if the item is already in the HashMap
+        if (cart.containsKey(pr)) {
+            // If it's already there, decrease the count
+            if(cart.get(pr) > 1){
+                cart.put(pr, cart.get(pr) - 1);
+            }else{
+                cart.remove(pr);
+            }
+            totalCost -= pr.getPrice();
+        } 
+    }
+    
+    //Get the list of item in the cart as a string
     public String printCart(){
         String text = "Your cart:\n";
         for (Map.Entry<product, Integer> entry : cart.entrySet()) {
@@ -76,7 +101,6 @@ public class state {
             cust.purchase(totalCost);
             success = true;
         }
-        productList = new HashMap<>();
         cart = new HashMap<>();
         totalCost = 0;
         return success;
@@ -84,7 +108,6 @@ public class state {
     
     public void resetCart(){
         cart = new HashMap<>();
-        productList = new HashMap<>();
         totalCost = 0;
     }
 }

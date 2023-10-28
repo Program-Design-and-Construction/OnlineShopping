@@ -30,6 +30,7 @@ public class Model extends Observable{
     public void registerUser(String name, String pass){
         System.out.println("Registering User...");
         this.state = db.updateNewUser(name, pass);
+        this.state = db.checkName(name, pass);
         this.setChanged();
         this.notifyObservers(this.state);
     }
@@ -118,23 +119,21 @@ public class Model extends Observable{
     
     public void topUp(String credit){
         System.out.println("Toped up");
-        this.state.menuStatus ="Success";
         double c;
         try {
             c = Double.parseDouble(credit);
-            this.state.menuStatus = "Success";
         } catch (NumberFormatException e) {
             c = 0;
-            this.state.menuStatus = "Fail";
         }
         this.state.cust.setCredit(c);
         this.db.updateCustomer(state.cust.getName(), state.cust.getCredit());
+        this.state.menuStatus = "Topup";
         this.setChanged();
         this.notifyObservers(state);
     }
     public void logout(){
         System.out.println("Loging out...");
-        this.state = new state();
+        this.state.loginFlag = false;
         this.setChanged();
         this.notifyObservers(state);
     }

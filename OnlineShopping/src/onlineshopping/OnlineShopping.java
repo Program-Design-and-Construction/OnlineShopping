@@ -15,7 +15,7 @@ public class OnlineShopping {
      */
     public static void main(String[] args) {
         /**
-         * Step 1: Call View, Model, and Controller class
+         * Call View, Model, and Controller class
          */
         View view = new View();
         Model model = new Model();

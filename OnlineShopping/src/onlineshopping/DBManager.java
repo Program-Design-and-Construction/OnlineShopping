@@ -119,7 +119,6 @@ public final class DBManager {
             
             if(!rs.next()){
                 statement.executeUpdate("INSERT INTO UserInfo " + "VALUES('" + name + "', '" + pass + "', 1000)");
-                state.loginFlag = true;
             }else{
                 System.out.println("Fail to update new user.");
             }          

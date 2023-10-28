@@ -92,8 +92,9 @@ public class Controller implements ActionListener{
                 this.model.topupMenu();
                 break;
             case "topupConfirmButton":
-                String creditText = this.view.topupInput.getText();               
-                this.model.topUp(creditText);
+                String creditText = this.view.topupInput.getText(); 
+                this.view.topupInput.setText("");
+                this.model.topUp(creditText);              
                 break;
                 
             //logout

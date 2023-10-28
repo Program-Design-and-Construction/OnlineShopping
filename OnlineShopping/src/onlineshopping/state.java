@@ -34,14 +34,15 @@ public class state {
     }
     
     public product getProduct(){
+        product pr = null;
         if (productList != null && productType != null) {
             List<product> prList = productList.get(productType);
             if (prList != null && productIndex >= 0 && productIndex < prList.size()) {
-                product pr = prList.get(productIndex);
-                return pr;
+                pr = prList.get(productIndex);
             }
         }
-        return null;
+        System.out.println(productType);
+        return pr;
     }
     
     //Get the count of item in the cart and 

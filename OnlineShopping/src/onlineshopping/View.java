@@ -249,6 +249,7 @@ public class View extends JFrame implements Observer{
     public void getProductTypeComboBox(state s){
         Map<String, List<product>> productList = s.productList;        
         //get the product type list and add type combobox
+        //productTypeComboBox.removeAllItems();
         if(productTypeComboBox.getItemCount() == 0){
             for (Map.Entry<String, List<product>> entry : productList.entrySet()) {
                 String type = entry.getKey();           
@@ -290,7 +291,7 @@ public class View extends JFrame implements Observer{
         p.add(Northp,BorderLayout.NORTH);
         p.add(Centerp,BorderLayout.CENTER);
         p.add(Southp,BorderLayout.SOUTH);      
-        
+        p.revalidate();
         return p;
     }
     
@@ -325,16 +326,16 @@ public class View extends JFrame implements Observer{
     @Override
     public void update(Observable o, Object arg) {
         state state = (state) arg;
+        getProductTypeComboBox(state);
         if(!state.loginFlag){
             this.unInput.setText("");
             this.pwInput.setText("");
             this.wrongName.setText("Wrong User or Pass word");
             this.wrongName.setForeground(Color.RED);
             this.login();
-        }else{
+        }else{           
             this.wrongName.setText("");
-            this.shoppingPage(state);
-            getProductTypeComboBox(state);
+            this.shoppingPage(state);           
         }
     }    
 }

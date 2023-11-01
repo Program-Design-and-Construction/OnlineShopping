@@ -21,6 +21,5 @@ public class OnlineShopping {
         Model model = new Model();
         Controller controller = new Controller(view, model);
         model.addObserver(view);
-    }
-    
+    } 
 }

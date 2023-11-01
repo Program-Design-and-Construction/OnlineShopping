@@ -326,7 +326,7 @@ public class View extends JFrame implements Observer{
     @Override
     public void update(Observable o, Object arg) {
         state state = (state) arg;
-        getProductTypeComboBox(state);
+        
         if(!state.loginFlag){
             this.unInput.setText("");
             this.pwInput.setText("");
@@ -335,7 +335,8 @@ public class View extends JFrame implements Observer{
             this.login();
         }else{           
             this.wrongName.setText("");
-            this.shoppingPage(state);           
+            this.shoppingPage(state); 
+            getProductTypeComboBox(state);
         }
     }    
 }
